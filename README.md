@@ -1,4 +1,4 @@
-# cursor-ninja README
+# Cursor Ninja README
 
 Move cursor like ninja.
 

@@ -1,7 +1,7 @@
 {
   "name": "cursor-ninja",
   "displayName": "Cursor Ninja",
-  "description": "",
+  "description": "Move cursor like ninja.",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.72.0"
@@ -9,6 +9,11 @@
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hw104/vscode-cursor-ninja.git"
+  },
+  "license": "MIT",
   "activationEvents": [
     "onCommand:cursor-ninja.jumpIndentDown",
     "onCommand:cursor-ninja.jumpIndentUp",
@@ -33,6 +38,8 @@
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
+    "vs:package": "vsce package --yarn",
+    "vs:publish": "vsce publish --yarn",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
@@ -40,16 +47,17 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.72.0",
     "@types/glob": "^8.0.0",
     "@types/mocha": "^10.0.0",
     "@types/node": "16.x",
+    "@types/vscode": "^1.72.0",
     "@typescript-eslint/eslint-plugin": "^5.38.1",
     "@typescript-eslint/parser": "^5.38.1",
+    "@vscode/test-electron": "^2.1.5",
     "eslint": "^8.24.0",
     "glob": "^8.0.3",
     "mocha": "^10.0.0",
     "typescript": "^4.8.4",
-    "@vscode/test-electron": "^2.1.5"
+    "vsce": "^2.11.0"
   }
 }
