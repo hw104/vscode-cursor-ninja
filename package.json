@@ -10,14 +10,19 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:cursor-ninja.helloWorld"
+    "onCommand:cursor-ninja.jumpIndentDown",
+    "onCommand:cursor-ninja.jumpIndentUp"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "cursor-ninja.helloWorld",
-        "title": "Hello World"
+        "command": "cursor-ninja.jumpIndentDown",
+        "title": "Cursor Ninja: Jump Indent Down"
+      },
+      {
+        "command": "cursor-ninja.jumpIndentUp",
+        "title": "Cursor Ninja: Jump Indent Up"
       }
     ]
   },
