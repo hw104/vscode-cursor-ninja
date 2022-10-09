@@ -11,7 +11,8 @@
   ],
   "activationEvents": [
     "onCommand:cursor-ninja.jumpIndentDown",
-    "onCommand:cursor-ninja.jumpIndentUp"
+    "onCommand:cursor-ninja.jumpIndentUp",
+    "onCommand:cursor-ninja.scrollToCenterCursor"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -23,6 +24,10 @@
       {
         "command": "cursor-ninja.jumpIndentUp",
         "title": "Cursor Ninja: Jump Indent Up"
+      },
+      {
+        "command": "cursor-ninja.scrollToCenterCursor",
+        "title": "Cursor Ninja: Scroll To Center Cursor"
       }
     ]
   },

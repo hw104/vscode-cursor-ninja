@@ -1,10 +1,12 @@
-import { Range, Selection, TextEditor } from "vscode";
+import { Range, Selection, TextEditor, TextEditorRevealType } from "vscode";
 
 export class CursorNinja {
   private readonly lineCount: number;
+  private readonly currentLine: number;
 
   constructor(private readonly editor: TextEditor) {
     this.lineCount = editor.document.lineCount;
+    this.currentLine = editor.selection.active.line;
   }
 
   static from(editor: TextEditor | undefined): CursorNinja | undefined {
@@ -48,7 +50,7 @@ export class CursorNinja {
   }
 
   jumpIndent(direction: "up" | "down"): boolean {
-    const from = this.editor.selection.active.line;
+    const from = this.currentLine;
     const indent = this.getIndent(from);
     if (indent == null) {
       return false;
@@ -60,5 +62,15 @@ export class CursorNinja {
 
     this.jump(to);
     return true;
+  }
+
+  async scrollToCenterCursor(): Promise<void> {
+    const toPosi = this.editor.selection.active.with(
+      this.currentLine,
+      this.editor.selection.anchor.character
+    );
+    const range = new Range(toPosi, toPosi);
+
+    this.editor.revealRange(range, TextEditorRevealType.InCenter);
   }
 }

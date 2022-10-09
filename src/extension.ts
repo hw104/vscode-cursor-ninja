@@ -9,6 +9,9 @@ export function activate(context: ExtensionContext) {
     commands.registerCommand("cursor-ninja.jumpIndentUp", () =>
       CursorNinja.from(window.activeTextEditor)?.jumpIndent("up")
     ),
+    commands.registerCommand("cursor-ninja.scrollToCenterCursor", () =>
+      CursorNinja.from(window.activeTextEditor)?.scrollToCenterCursor()
+    ),
   ].forEach((cmd) => context.subscriptions.push(cmd));
 }
 
