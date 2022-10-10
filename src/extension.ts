@@ -11,7 +11,7 @@ function handler<T>(
     return;
   }
 
-  return cb(context, editor, { emptyLineBehavior: "empty" });
+  return cb(context, editor, { emptyLineBehavior: "nonempty" });
 }
 
 export function activate(context: ExtensionContext) {

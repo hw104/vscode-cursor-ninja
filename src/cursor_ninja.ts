@@ -12,7 +12,8 @@ type Direction = "up" | "down";
 export class CursorNinja {
   constructor(
     private readonly eye: NinjaEye,
-    private readonly foot: NinjaFoot
+    private readonly foot: NinjaFoot,
+    private readonly config: Config
   ) {}
 
   static from(
@@ -20,21 +21,26 @@ export class CursorNinja {
     editor: TextEditor,
     config: Config
   ): CursorNinja {
-    return new CursorNinja(new NinjaEye(editor, config), new NinjaFoot(editor));
+    return new CursorNinja(
+      new NinjaEye(editor, config),
+      new NinjaFoot(editor),
+      config
+    );
   }
 
   jumpIndent(direction: Direction) {
-    const currentLine = this.eye.currentLine;
-    const currentIndent = this.eye.getIndent(currentLine);
-    const toLine =
-      currentIndent != null
-        ? this.eye.findLine((l) => this.eye.getIndent(l) === currentIndent, {
-            direction,
-            from: currentLine,
-          })
-        : undefined;
+    const from = this.eye.currentLine;
+    const indent = this.eye.getIndent(from);
+    if (indent == null) {
+      return;
+    }
 
-    console.table({ currentLine, currentIndent, toLine });
+    const sp = indent === -1 && this.config.emptyLineBehavior === "nonempty";
+    const toLine = this.eye.findLine(
+      (l) =>
+        sp ? this.eye.getIndent(l) !== -1 : this.eye.getIndent(l) === indent,
+      { direction, from: from }
+    );
 
     if (toLine != null) {
       this.foot.jump(toLine);
