@@ -1,16 +1,31 @@
-import { commands, ExtensionContext, window } from "vscode";
+import { commands, ExtensionContext, TextEditor, window } from "vscode";
+import { Config } from "./config";
 import { CursorNinja } from "./cursor_ninja";
+
+function handler<T>(
+  context: ExtensionContext,
+  cb: (context: ExtensionContext, editor: TextEditor, config: Config) => T
+): T | undefined {
+  const editor = window.activeTextEditor;
+  if (editor == null) {
+    return;
+  }
+
+  return cb(context, editor, { emptyLineBehavior: "empty" });
+}
 
 export function activate(context: ExtensionContext) {
   [
     commands.registerCommand("cursor-ninja.jumpIndentDown", () =>
-      CursorNinja.from(window.activeTextEditor)?.jumpIndent("down")
+      handler(context, (...arg) => CursorNinja.from(...arg).jumpIndent("down"))
     ),
     commands.registerCommand("cursor-ninja.jumpIndentUp", () =>
-      CursorNinja.from(window.activeTextEditor)?.jumpIndent("up")
+      handler(context, (...arg) => CursorNinja.from(...arg).jumpIndent("up"))
     ),
     commands.registerCommand("cursor-ninja.scrollToCenterCursor", () =>
-      CursorNinja.from(window.activeTextEditor)?.scrollToCenterCursor()
+      handler(context, (...arg) =>
+        CursorNinja.from(...arg).scrollToCenterCursor()
+      )
     ),
   ].forEach((cmd) => context.subscriptions.push(cmd));
 }

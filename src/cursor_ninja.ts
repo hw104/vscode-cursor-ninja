@@ -1,43 +1,107 @@
-import { Range, Selection, TextEditor, TextEditorRevealType } from "vscode";
+import {
+  ExtensionContext,
+  Range,
+  Selection,
+  TextEditor,
+  TextEditorRevealType,
+} from "vscode";
+import { Config } from "./config";
+
+type Direction = "up" | "down";
 
 export class CursorNinja {
-  private readonly lineCount: number;
-  private readonly currentLine: number;
+  constructor(
+    private readonly eye: NinjaEye,
+    private readonly foot: NinjaFoot
+  ) {}
 
-  constructor(private readonly editor: TextEditor) {
+  static from(
+    context: ExtensionContext,
+    editor: TextEditor,
+    config: Config
+  ): CursorNinja {
+    return new CursorNinja(new NinjaEye(editor, config), new NinjaFoot(editor));
+  }
+
+  jumpIndent(direction: Direction) {
+    const currentLine = this.eye.currentLine;
+    const currentIndent = this.eye.getIndent(currentLine);
+    const toLine =
+      currentIndent != null
+        ? this.eye.findLine((l) => this.eye.getIndent(l) === currentIndent, {
+            direction,
+            from: currentLine,
+          })
+        : undefined;
+
+    console.table({ currentLine, currentIndent, toLine });
+
+    if (toLine != null) {
+      this.foot.jump(toLine);
+    }
+  }
+
+  scrollToCenterCursor() {
+    this.foot.jump(this.eye.currentLine, TextEditorRevealType.InCenter);
+  }
+}
+
+export class NinjaEye {
+  public readonly lineCount: number;
+  public readonly currentLine: number;
+
+  constructor(
+    private readonly editor: TextEditor,
+    private readonly config: Config
+  ) {
     this.lineCount = editor.document.lineCount;
     this.currentLine = editor.selection.active.line;
   }
 
-  static from(editor: TextEditor | undefined): CursorNinja | undefined {
-    return editor != null ? new CursorNinja(editor) : undefined;
-  }
-
   isValidLineNumber(line: number): boolean {
-    return 0 < line && line < this.lineCount;
+    return 0 <= line && line < this.lineCount;
   }
 
+  /**
+   * Returns the number of spaces used as indent. or -1 if line is empty.
+   */
   getIndent(line: number): number | undefined {
-    return this.isValidLineNumber(line)
-      ? this.editor.document.lineAt(line).firstNonWhitespaceCharacterIndex
-      : undefined;
+    if (!this.isValidLineNumber(line)) {
+      return;
+    }
+    const l = this.editor.document.lineAt(line);
+    const indent = l.firstNonWhitespaceCharacterIndex;
+
+    [].indexOf;
+
+    if (l.isEmptyOrWhitespace && indent == 0) {
+      return -1;
+    }
+
+    return indent;
   }
 
-  findLineByIndent(param: {
-    from: number;
-    indent: number;
-    direction: "up" | "down";
-  }): number | undefined {
-    const { from, indent, direction } = param;
+  findLine(
+    finder: (line: number) => boolean,
+    param: {
+      from: number;
+      direction: Direction;
+    }
+  ): number | undefined {
+    const { from, direction } = param;
     const sign = direction === "down" ? 1 : -1;
     const length = direction === "down" ? this.lineCount - 1 - from : from;
 
-    return Array.from({ length })
-      .map((_, i) => from + (i + 1) * sign)
-      .find((line) => this.getIndent(line) == indent);
+    const hoge = Array.from({ length }).map((_, i) => from + (i + 1) * sign);
+    console.log("hoge", hoge);
+    return hoge.find((l) => finder(l));
   }
+}
 
-  jump(to: number) {
+export class NinjaFoot {
+  constructor(private readonly editor: TextEditor) {}
+
+  jump(to: number, revealType?: TextEditorRevealType) {
     const toPosi = this.editor.selection.active.with(
       to,
       this.editor.selection.anchor.character
@@ -46,31 +110,6 @@ export class CursorNinja {
     const range = new Range(toPosi, toPosi);
 
     this.editor.selection = selection;
-    this.editor.revealRange(range);
-  }
-
-  jumpIndent(direction: "up" | "down"): boolean {
-    const from = this.currentLine;
-    const indent = this.getIndent(from);
-    if (indent == null) {
-      return false;
-    }
-    const to = this.findLineByIndent({ from, indent, direction });
-    if (to == null) {
-      return false;
-    }
-
-    this.jump(to);
-    return true;
-  }
-
-  async scrollToCenterCursor(): Promise<void> {
-    const toPosi = this.editor.selection.active.with(
-      this.currentLine,
-      this.editor.selection.anchor.character
-    );
-    const range = new Range(toPosi, toPosi);
-
-    this.editor.revealRange(range, TextEditorRevealType.InCenter);
+    this.editor.revealRange(range, revealType);
   }
 }
