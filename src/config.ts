@@ -1,3 +1,5 @@
+import * as vscode from "vscode";
+
 /**
  * Described in package.json
  */
@@ -9,3 +11,4 @@ export interface Config {
 export interface ConfigItem<T> {
   value: T;
 }
+

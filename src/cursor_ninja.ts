@@ -52,6 +52,10 @@ export class CursorNinja {
     }
   }
 
+  jumpToNextEntity() {
+    
+  }
+
   scrollToCenterCursor() {
     this.foot.jump(this.eye.currentLine, TextEditorRevealType.InCenter);
   }
@@ -76,6 +80,8 @@ export class NinjaEye {
   getIndent(line: number): number {
     const l = this.editor.document.lineAt(this.standarizeLineNumber(line));
     const indent = l.firstNonWhitespaceCharacterIndex;
+
+    
 
     if (l.isEmptyOrWhitespace && indent == 0) {
       return -1;

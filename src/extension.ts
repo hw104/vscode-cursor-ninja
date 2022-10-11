@@ -1,4 +1,10 @@
-import { commands, ExtensionContext, TextEditor, window } from "vscode";
+import {
+  commands,
+  ExtensionContext,
+  workspace,
+  TextEditor,
+  window,
+} from "vscode";
 import { Config } from "./config";
 import { CursorNinja } from "./cursor_ninja";
 
@@ -17,8 +23,14 @@ async function handler<T>(
 
   try {
     return await cb(context, editor, {
-      emptyLineBehavior: "nonempty",
-      cyclic: true,
+      emptyLineBehavior:
+        workspace
+          .getConfiguration("cursor-ninja")
+          .get<Config["emptyLineBehavior"]>("emptyLineBehavior") ?? "nonempty",
+      cyclic:
+        workspace
+          .getConfiguration("cursor-ninja")
+          .get<Config["cyclic"]>("cyclic") ?? true,
     });
   } catch (error) {
     console.error(error);
