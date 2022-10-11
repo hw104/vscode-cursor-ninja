@@ -1,19 +1,20 @@
 import {
   commands,
   ExtensionContext,
-  workspace,
   TextEditor,
   window,
+  workspace,
 } from "vscode";
-import { Config } from "./config";
+import { Config, LazyConfig } from "./config";
 import { CursorNinja } from "./cursor_ninja";
+import { createLazyObj } from "./util";
 
 async function handler<T>(
   context: ExtensionContext,
   cb: (
     context: ExtensionContext,
     editor: TextEditor,
-    config: Config
+    config: LazyConfig
   ) => Promise<T>
 ): Promise<T | undefined> {
   const editor = window.activeTextEditor;
@@ -21,21 +22,15 @@ async function handler<T>(
     return;
   }
 
+  const config = workspace.getConfiguration("cursor-ninja");
+  const configLoader = createLazyObj<Config>({
+    cyclic: () => config.get("cyclic") as any,
+    emptyLineBehavior: () => config.get("emptyLineBehavior") as any,
+    gapBehavior: () => config.get("gapBehavior") as any,
+  });
+
   try {
-    return await cb(context, editor, {
-      emptyLineBehavior:
-        workspace
-          .getConfiguration("cursor-ninja")
-          .get<Config["emptyLineBehavior"]>("emptyLineBehavior") ?? "nonempty",
-      cyclic:
-        workspace
-          .getConfiguration("cursor-ninja")
-          .get<Config["cyclic"]>("cyclic") ?? true,
-      gapBehavior:
-        workspace
-          .getConfiguration("cursor-ninja")
-          .get<Config["gapBehavior"]>("gapBehavior") ?? "parent",
-    });
+    return await cb(context, editor, configLoader);
   } catch (error) {
     console.error(error);
     throw error;

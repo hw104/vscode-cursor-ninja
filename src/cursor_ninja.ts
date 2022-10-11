@@ -5,7 +5,8 @@ import {
   TextEditor,
   TextEditorRevealType,
 } from "vscode";
-import { Config } from "./config";
+import { Config, LazyConfig } from "./config";
+import { switcher } from "./util";
 
 type Direction = "up" | "down";
 
@@ -13,19 +14,15 @@ export class CursorNinja {
   constructor(
     private readonly eye: NinjaEye,
     private readonly foot: NinjaFoot,
-    private readonly config: Config
+    private readonly config: LazyConfig
   ) {}
 
   static from(
     context: ExtensionContext,
     editor: TextEditor,
-    config: Config
+    config: LazyConfig
   ): CursorNinja {
-    return new CursorNinja(
-      new NinjaEye(editor, config),
-      new NinjaFoot(editor),
-      config
-    );
+    return new CursorNinja(new NinjaEye(editor), new NinjaFoot(editor), config);
   }
 
   jumpIndent(direction: Direction) {
@@ -36,52 +33,30 @@ export class CursorNinja {
     from: number;
     direction: Direction;
   }): number | undefined {
-    const { direction, from } = param;
-    const indent = this.eye.getIndent(from);
-    const option = { direction, from, cyclic: this.config.cyclic };
+    const indent = this.eye.getIndent(param.from);
 
-    let toLine: number | undefined;
-
-    if (indent === -1) {
-      toLine = this.eye.findLine(
-        (l) =>
-          this.config.emptyLineBehavior === "nonempty"
-            ? this.eye.getIndent(l) !== -1
-            : this.eye.getIndent(l) === -1,
-        option
-      );
-    } else {
-      for (const l of this.eye.getLines(option)) {
-        if (toLine != null) {
-          break;
-        }
-
+    const toLine = this.eye.findLine(
+      (l) => {
         const i = this.eye.getIndent(l);
-        if (i === -1) {
-          continue;
+
+        if (indent === -1) {
+          return this.config.emptyLineBehavior.get() === "nonempty"
+            ? i !== -1
+            : i === -1;
         }
-        const switcher: Record<Config["gapBehavior"], () => unknown> = {
-          beyond: () => {
-            if (i === indent) {
-              toLine = l;
-            }
-          },
-          parent: () => {
-            if (i <= indent) {
-              toLine = l;
-            }
-          },
-          stop: () => {
-            if (i === indent) {
-              toLine = l;
-            } else if (i <= indent) {
-              toLine = from;
-            }
-          },
-        };
-        switcher[this.config.gapBehavior]();
-      }
-    }
+
+        if (i === -1) {
+          return false;
+        }
+
+        return switcher<Config["gapBehavior"], boolean | number>({
+          beyond: i === indent,
+          parent: i <= indent,
+          stop: i === indent ? true : i <= indent ? param.from : false,
+        })(this.config.gapBehavior.get());
+      },
+      { ...param, cyclic: this.config.cyclic.get() }
+    );
 
     if (toLine != null) {
       this.foot.jump(toLine);
@@ -100,10 +75,7 @@ export class NinjaEye {
   public readonly lineCount: number;
   public readonly currentLine: number;
 
-  constructor(
-    private readonly editor: TextEditor,
-    private readonly config: Config
-  ) {
+  constructor(private readonly editor: TextEditor) {
     this.lineCount = editor.document.lineCount;
     this.currentLine = editor.selection.active.line;
   }
@@ -148,10 +120,19 @@ export class NinjaEye {
   }
 
   findLine(
-    finder: (line: number) => boolean,
+    finder: (line: number) => boolean | number,
     option: Parameters<typeof this.getLines>[0]
   ): number | undefined {
-    return this.getLines(option).find((l) => finder(l));
+    for (const l of this.getLines(option)) {
+      const result = finder(l);
+      if (typeof result === "boolean" && result) {
+        return l;
+      }
+
+      if (typeof result === "number") {
+        return result;
+      }
+    }
   }
 }
 

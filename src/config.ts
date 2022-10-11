@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import { LazyObj } from "./util";
 
 /**
  * Described in package.json
@@ -9,6 +9,4 @@ export interface Config {
   gapBehavior: "stop" | "parent" | "beyond";
 }
 
-export interface ConfigItem<T> {
-  value: T;
-}
+export type LazyConfig = LazyObj<Config>;
