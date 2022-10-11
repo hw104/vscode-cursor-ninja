@@ -38,13 +38,50 @@ export class CursorNinja {
   }): number | undefined {
     const { direction, from } = param;
     const indent = this.eye.getIndent(from);
+    const option = { direction, from, cyclic: this.config.cyclic };
 
-    const sp = indent === -1 && this.config.emptyLineBehavior === "nonempty";
-    const toLine = this.eye.findLine(
-      (l) =>
-        sp ? this.eye.getIndent(l) !== -1 : this.eye.getIndent(l) === indent,
-      { direction, from, cyclic: this.config.cyclic }
-    );
+    let toLine: number | undefined;
+
+    if (indent === -1) {
+      toLine = this.eye.findLine(
+        (l) =>
+          this.config.emptyLineBehavior === "nonempty"
+            ? this.eye.getIndent(l) !== -1
+            : this.eye.getIndent(l) === -1,
+        option
+      );
+    } else {
+      for (const l of this.eye.getLines(option)) {
+        if (toLine != null) {
+          break;
+        }
+
+        const i = this.eye.getIndent(l);
+        if (i === -1) {
+          continue;
+        }
+        const switcher: Record<Config["gapBehavior"], () => unknown> = {
+          beyond: () => {
+            if (i === indent) {
+              toLine = l;
+            }
+          },
+          parent: () => {
+            if (i <= indent) {
+              toLine = l;
+            }
+          },
+          stop: () => {
+            if (i === indent) {
+              toLine = l;
+            } else if (i <= indent) {
+              toLine = from;
+            }
+          },
+        };
+        switcher[this.config.gapBehavior]();
+      }
+    }
 
     if (toLine != null) {
       this.foot.jump(toLine);
@@ -52,9 +89,7 @@ export class CursorNinja {
     }
   }
 
-  jumpToNextEntity() {
-    
-  }
+  jumpToNextEntity() {}
 
   scrollToCenterCursor() {
     this.foot.jump(this.eye.currentLine, TextEditorRevealType.InCenter);
@@ -81,8 +116,6 @@ export class NinjaEye {
     const l = this.editor.document.lineAt(this.standarizeLineNumber(line));
     const indent = l.firstNonWhitespaceCharacterIndex;
 
-    
-
     if (l.isEmptyOrWhitespace && indent == 0) {
       return -1;
     }
@@ -95,10 +128,11 @@ export class NinjaEye {
     return a < 0 ? this.lineCount + a : a;
   }
 
-  findLine(
-    finder: (line: number) => boolean,
-    option: { from: number; direction: Direction; cyclic: boolean }
-  ): number | undefined {
+  getLines(option: {
+    from: number;
+    direction: Direction;
+    cyclic: boolean;
+  }): number[] {
     const { from, direction, cyclic } = option;
 
     const sign = direction === "down" ? 1 : -1;
@@ -108,11 +142,16 @@ export class NinjaEye {
       ? this.lineCount - 1 - from
       : from;
 
-    const targets = Array.from({ length }).map((_, i) =>
+    return Array.from({ length }).map((_, i) =>
       this.standarizeLineNumber(from + (i + 1) * sign)
     );
+  }
 
-    return targets.find((l) => finder(l));
+  findLine(
+    finder: (line: number) => boolean,
+    option: Parameters<typeof this.getLines>[0]
+  ): number | undefined {
+    return this.getLines(option).find((l) => finder(l));
   }
 }
 

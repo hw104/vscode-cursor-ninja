@@ -31,6 +31,10 @@ async function handler<T>(
         workspace
           .getConfiguration("cursor-ninja")
           .get<Config["cyclic"]>("cyclic") ?? true,
+      gapBehavior:
+        workspace
+          .getConfiguration("cursor-ninja")
+          .get<Config["gapBehavior"]>("gapBehavior") ?? "parent",
     });
   } catch (error) {
     console.error(error);
