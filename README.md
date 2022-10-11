@@ -4,8 +4,9 @@ Move cursor like ninja.
 
 ## Features
 
-- Jump by indent.
-- Scroll to cursor in center.
+- **Jump by indent**: `jumpIndentDown` / `jumpIndentUp`.
+  - configurations: `cyclic`, `gapBehavior`, `emptyLineBehavior`
+- **Scroll to cursor in center**: `scrollToCenterCursor`
 - ...more coming soon!
 
 ## Keyboard Shortcuts

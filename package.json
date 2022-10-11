@@ -60,7 +60,7 @@
         "cursor-ninja.gapBehavior": {
           "type": "string",
           "description": "Jump behavior when the cursor in last/top line of the indent block.",
-          "default": "parent",
+          "default": "stop",
           "enum": [
             "parent",
             "beyond",
