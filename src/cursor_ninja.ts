@@ -30,20 +30,30 @@ export class CursorNinja {
 
   jumpIndent(direction: Direction) {
     const from = this.eye.currentLine;
+
+    return this.#jumpIndent({ direction, from });
+  }
+
+  #jumpIndent(param: {
+    from: number;
+    direction: Direction;
+  }): number | undefined {
+    const { direction, from } = param;
     const indent = this.eye.getIndent(from);
     if (indent == null) {
-      return;
+      throw new Error(`Invalid current line: ${from}`);
     }
 
     const sp = indent === -1 && this.config.emptyLineBehavior === "nonempty";
     const toLine = this.eye.findLine(
       (l) =>
         sp ? this.eye.getIndent(l) !== -1 : this.eye.getIndent(l) === indent,
-      { direction, from: from }
+      { direction, from, includeFrom: false, cyclic: this.config.cyclic }
     );
 
     if (toLine != null) {
       this.foot.jump(toLine);
+      return toLine;
     }
   }
 
@@ -68,12 +78,11 @@ export class NinjaEye {
     return 0 <= line && line < this.lineCount;
   }
 
-  /**
-   * Returns the number of spaces used as indent. or -1 if line is empty.
-   */
-  getIndent(line: number): number | undefined {
+  getIndent(line: number): number {
     if (!this.isValidLineNumber(line)) {
-      return;
+      throw new Error(
+        `line ${line} is out of range: 0 ~ ${this.lineCount - 1}`
+      );
     }
     const l = this.editor.document.lineAt(line);
     const indent = l.firstNonWhitespaceCharacterIndex;
@@ -87,20 +96,35 @@ export class NinjaEye {
     return indent;
   }
 
+  standarizeLineNumber(line: number): number {
+    const a = line % this.lineCount;
+    return a < 0 ? this.lineCount + a : a;
+  }
+
   findLine(
     finder: (line: number) => boolean,
-    param: {
+    option: {
       from: number;
       direction: Direction;
+      includeFrom: boolean;
+      cyclic: boolean;
     }
   ): number | undefined {
-    const { from, direction } = param;
+    const { from, direction, includeFrom, cyclic } = option;
     const sign = direction === "down" ? 1 : -1;
     const length = direction === "down" ? this.lineCount - 1 - from : from;
+    const add = includeFrom ? 0 : 1;
 
-    const hoge = Array.from({ length }).map((_, i) => from + (i + 1) * sign);
-    console.log("hoge", hoge);
-    return hoge.find((l) => finder(l));
+    const targets = Array.from({
+      length: (cyclic ? this.lineCount : length) - add,
+    })
+      .map((_, i) => i + add)
+      .map((i) => from + i * sign)
+      .map((i) => this.standarizeLineNumber(i));
+
+    console.log("targets", targets);
+
+    return targets.find((l) => finder(l));
   }
 }
 
