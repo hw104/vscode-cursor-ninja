@@ -29,9 +29,7 @@ export class CursorNinja {
   }
 
   jumpIndent(direction: Direction) {
-    const from = this.eye.currentLine;
-
-    return this.#jumpIndent({ direction, from });
+    return this.#jumpIndent({ direction, from: this.eye.currentLine });
   }
 
   #jumpIndent(param: {
@@ -40,15 +38,12 @@ export class CursorNinja {
   }): number | undefined {
     const { direction, from } = param;
     const indent = this.eye.getIndent(from);
-    if (indent == null) {
-      throw new Error(`Invalid current line: ${from}`);
-    }
 
     const sp = indent === -1 && this.config.emptyLineBehavior === "nonempty";
     const toLine = this.eye.findLine(
       (l) =>
         sp ? this.eye.getIndent(l) !== -1 : this.eye.getIndent(l) === indent,
-      { direction, from, includeFrom: false, cyclic: this.config.cyclic }
+      { direction, from, cyclic: this.config.cyclic }
     );
 
     if (toLine != null) {
@@ -79,15 +74,8 @@ export class NinjaEye {
   }
 
   getIndent(line: number): number {
-    if (!this.isValidLineNumber(line)) {
-      throw new Error(
-        `line ${line} is out of range: 0 ~ ${this.lineCount - 1}`
-      );
-    }
-    const l = this.editor.document.lineAt(line);
+    const l = this.editor.document.lineAt(this.standarizeLineNumber(line));
     const indent = l.firstNonWhitespaceCharacterIndex;
-
-    [].indexOf;
 
     if (l.isEmptyOrWhitespace && indent == 0) {
       return -1;
@@ -103,26 +91,20 @@ export class NinjaEye {
 
   findLine(
     finder: (line: number) => boolean,
-    option: {
-      from: number;
-      direction: Direction;
-      includeFrom: boolean;
-      cyclic: boolean;
-    }
+    option: { from: number; direction: Direction; cyclic: boolean }
   ): number | undefined {
-    const { from, direction, includeFrom, cyclic } = option;
+    const { from, direction, cyclic } = option;
+
     const sign = direction === "down" ? 1 : -1;
-    const length = direction === "down" ? this.lineCount - 1 - from : from;
-    const add = includeFrom ? 0 : 1;
+    const length = cyclic
+      ? this.lineCount - 1
+      : direction === "down"
+      ? this.lineCount - 1 - from
+      : from;
 
-    const targets = Array.from({
-      length: (cyclic ? this.lineCount : length) - add,
-    })
-      .map((_, i) => i + add)
-      .map((i) => from + i * sign)
-      .map((i) => this.standarizeLineNumber(i));
-
-    console.log("targets", targets);
+    const targets = Array.from({ length }).map((_, i) =>
+      this.standarizeLineNumber(from + (i + 1) * sign)
+    );
 
     return targets.find((l) => finder(l));
   }

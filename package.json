@@ -54,7 +54,7 @@
         },
         "cursor-ninja.cyclic": {
           "type": "boolean",
-          "description": "whether cyclic jump when the cursor in the bottom/top in editor.",
+          "description": "whether cyclic jump.",
           "default": true
         }
       }

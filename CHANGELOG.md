@@ -2,7 +2,7 @@
 
 ## 0.0.2
 
-- Cyclic jump when the cursor in the bottom/top in editor.
+- Cyclic jump.
 - Improve empty line behavior.
 
 ## 0.0.1
