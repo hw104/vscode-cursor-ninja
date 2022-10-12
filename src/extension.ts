@@ -27,6 +27,7 @@ async function handler<T>(
     cyclic: () => config.get("cyclic") as any,
     emptyLineBehavior: () => config.get("emptyLineBehavior") as any,
     gapBehavior: () => config.get("gapBehavior") as any,
+    ignore: () => config.get("ignore") as any,
   });
 
   try {

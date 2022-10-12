@@ -7,6 +7,7 @@ export interface Config {
   emptyLineBehavior: "empty" | "nonempty";
   cyclic: boolean;
   gapBehavior: "stop" | "parent" | "beyond";
+  ignore: string[];
 }
 
 export type LazyConfig = LazyObj<Config>;

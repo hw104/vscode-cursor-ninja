@@ -4,6 +4,7 @@ import {
   Selection,
   TextEditor,
   TextEditorRevealType,
+  TextLine,
 } from "vscode";
 import { Config, LazyConfig } from "./config";
 import { switcher } from "./util";
@@ -33,11 +34,22 @@ export class CursorNinja {
     from: number;
     direction: Direction;
   }): number | undefined {
-    const indent = this.eye.getIndent(param.from);
+    const indent = this.eye.getIndent(this.eye.getLineInfo(param.from));
+
+    const ignore = this.config.ignore.get();
 
     const toLine = this.eye.findLine(
       (l) => {
-        const i = this.eye.getIndent(l);
+        const line = this.eye.getLineInfo(l);
+        const i = this.eye.getIndent(line);
+
+        if (ignore.length !== 0) {
+          let t = line.text;
+          ignore.forEach((i) => (t = t.replaceAll(i, "")));
+          if (t.length === 0) {
+            return false;
+          }
+        }
 
         if (indent === -1) {
           return this.config.emptyLineBehavior.get() === "nonempty"
@@ -84,8 +96,11 @@ export class NinjaEye {
     return 0 <= line && line < this.lineCount;
   }
 
-  getIndent(line: number): number {
-    const l = this.editor.document.lineAt(this.standarizeLineNumber(line));
+  getLineInfo(l: number): TextLine {
+    return this.editor.document.lineAt(this.standarizeLineNumber(l));
+  }
+
+  getIndent(l: TextLine): number {
     const indent = l.firstNonWhitespaceCharacterIndex;
 
     if (l.isEmptyOrWhitespace && indent == 0) {

@@ -71,6 +71,14 @@
             "Crossing the gap",
             "Will not jump."
           ]
+        },
+        "cursor-ninja.ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "markdownDescription": "Ignore lines consisting only of these texts. e.g. `;`, `(`, `)`, `{`, `}`, `end`, `done`",
+          "default": []
         }
       }
     }
