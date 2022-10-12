@@ -36,19 +36,30 @@ export class CursorNinja {
   }): number | undefined {
     const indent = this.eye.getIndent(this.eye.getLineInfo(param.from));
 
-    const ignore = this.config.ignore.get();
+    const ignoreLetters = this.config.ignoreLetters.get();
+    const ignoreRegExps = this.config.ignoreRegExps.get();
 
     const toLine = this.eye.findLine(
       (l) => {
         const line = this.eye.getLineInfo(l);
+        const text = line.text;
         const i = this.eye.getIndent(line);
 
-        if (ignore.length !== 0) {
-          let t = line.text;
-          ignore.forEach((i) => (t = t.replaceAll(i, "")));
-          if (t.length === 0) {
-            return false;
-          }
+        if (
+          ignoreLetters.length !== 0 &&
+          ignoreLetters.reduce(
+            (prev, current) => prev.replaceAll(current, ""),
+            text
+          ).length === 0
+        ) {
+          return false;
+        }
+
+        if (
+          ignoreRegExps.length !== 0 &&
+          ignoreRegExps.some((r) => new RegExp(r).test(text))
+        ) {
+          return false;
         }
 
         if (indent === -1) {

@@ -79,6 +79,14 @@
           },
           "markdownDescription": "Ignore lines consisting only of these texts. e.g. `;`, `(`, `)`, `{`, `}`, `end`, `done`",
           "default": []
+        },
+        "cursor-ninja.ignoreRegExps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "markdownDescription": "Ignore lines that match these regular expressions",
+          "default": []
         }
       }
     }
