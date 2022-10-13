@@ -28,7 +28,7 @@ async function handler<T>(
     emptyLineBehavior: () => config.get("emptyLineBehavior") as any,
     gapBehavior: () => config.get("gapBehavior") as any,
     ignoreLetters: () => config.get("ignore") as any,
-    ignoreRegExps: () => config.get('ignoreRegExps') as any,
+    ignoreRegExps: () => config.get("ignoreRegExps") as any,
   });
 
   try {
