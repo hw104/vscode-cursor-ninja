@@ -1,20 +1,16 @@
-import {
-  commands,
-  ExtensionContext,
-  TextEditor,
-  window,
-  workspace,
-} from "vscode";
-import { Config, LazyConfig } from "./config";
-import { CursorNinja } from "./cursor_ninja";
-import { createLazyObj } from "./util";
+import { commands, ExtensionContext, window, workspace } from "vscode";
+import { Direction } from "./models/direction";
+import { ConfigRepo } from "./repos/config_repo";
+import { EditorRepo } from "./repos/editor_repo";
+import { jumpByIndent } from "./usecases/jump_by_indent";
+import { scrollToCenterCursor } from "./usecases/scroll_to_center";
 
 async function handler<T>(
   context: ExtensionContext,
   cb: (
     context: ExtensionContext,
-    editor: TextEditor,
-    config: LazyConfig
+    editorRepo: EditorRepo,
+    configRepo: ConfigRepo
   ) => Promise<T>
 ): Promise<T | undefined> {
   const editor = window.activeTextEditor;
@@ -22,17 +18,11 @@ async function handler<T>(
     return;
   }
 
-  const config = workspace.getConfiguration("cursor-ninja");
-  const configLoader = createLazyObj<Config>({
-    cyclic: () => config.get("cyclic") as any,
-    emptyLineBehavior: () => config.get("emptyLineBehavior") as any,
-    gapBehavior: () => config.get("gapBehavior") as any,
-    ignoreLetters: () => config.get("ignore") as any,
-    ignoreRegExps: () => config.get("ignoreRegExps") as any,
-  });
+  const editorRepo = new EditorRepo(editor);
+  const configRepo = new ConfigRepo(workspace.getConfiguration("cursor-ninja"));
 
   try {
-    return await cb(context, editor, configLoader);
+    return await cb(context, editorRepo, configRepo);
   } catch (error) {
     console.error(error);
     throw error;
@@ -42,19 +32,17 @@ async function handler<T>(
 export function activate(context: ExtensionContext) {
   [
     commands.registerCommand("cursor-ninja.jumpIndentDown", () =>
-      handler(context, async (...arg) =>
-        CursorNinja.from(...arg).jumpIndent("down")
+      handler(context, async (_, editor, config) =>
+        jumpByIndent(editor, config, Direction.next())
       )
     ),
     commands.registerCommand("cursor-ninja.jumpIndentUp", () =>
-      handler(context, async (...arg) =>
-        CursorNinja.from(...arg).jumpIndent("up")
+      handler(context, async (_, editor, config) =>
+        jumpByIndent(editor, config, Direction.prev())
       )
     ),
     commands.registerCommand("cursor-ninja.scrollToCenterCursor", () =>
-      handler(context, async (...arg) =>
-        CursorNinja.from(...arg).scrollToCenterCursor()
-      )
+      handler(context, async (_, editor) => scrollToCenterCursor(editor))
     ),
   ].forEach((cmd) => context.subscriptions.push(cmd));
 }

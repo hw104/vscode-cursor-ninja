@@ -72,7 +72,7 @@
             "Will not jump."
           ]
         },
-        "cursor-ninja.ignore": {
+        "cursor-ninja.ignoreLetters": {
           "type": "array",
           "items": {
             "type": "string"
@@ -99,7 +99,7 @@
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/__tests__/runTest.js"
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",
