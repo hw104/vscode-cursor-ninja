@@ -5,9 +5,9 @@ import {
   TextEditorRevealType,
   TextLine,
 } from "vscode";
+import { createLazy, Lazy } from "../lazy";
 import { Config } from "../models/config";
 import { Direction } from "../models/direction";
-import { createLazy, Lazy } from "../lazy";
 
 type FindLineParam = {
   from: number;
@@ -59,7 +59,7 @@ export class EditorRepo {
 
     for (let i = 1; i < this.lineCount; i++) {
       const lineNumber = this.#standarizeLineNumber(from + i * sign);
-      if (cyclic && lineNumber * sign < from * sign) {
+      if (!cyclic && lineNumber * sign < from * sign) {
         break;
       }
       yield lineNumber;
