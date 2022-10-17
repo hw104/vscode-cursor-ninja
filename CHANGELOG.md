@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.3.0
+
+- Cyclic jumps within a block.
+
 ## 0.2.0
 
 - Add ignoring line configurations.
