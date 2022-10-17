@@ -5,7 +5,7 @@ import {
   TextEditorRevealType,
   TextLine,
 } from "vscode";
-import { createLazy, Lazy } from "../lazy";
+import { createLazy, Lazy } from "../utils/lazy";
 import { Config } from "../models/config";
 import { Direction } from "../models/direction";
 
