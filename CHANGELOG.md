@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.3.0
+## 0.3.2
 
 - Cyclic jumps within a block.
 
