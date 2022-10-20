@@ -2,7 +2,7 @@
   "name": "cursor-ninja",
   "displayName": "Cursor Ninja",
   "description": "Move cursor like ninja.",
-  "version": "0.3.0",
+  "version": "0.3.3",
   "publisher": "hw104",
   "engines": {
     "vscode": "^1.72.0"
@@ -99,7 +99,7 @@
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/__tests__/runTest.js"
+    "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",
