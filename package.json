@@ -39,19 +39,6 @@
     "configuration": {
       "title": "Cursor Ninja",
       "properties": {
-        "cursor-ninja.emptyLineBehavior": {
-          "type": "string",
-          "description": "Jump behavior when the cursor in an empty line",
-          "default": "nonempty",
-          "enum": [
-            "empty",
-            "nonempty"
-          ],
-          "enumDescriptions": [
-            "Jump to next/previous empty line.",
-            "Jump to next/previous nonempty line."
-          ]
-        },
         "cursor-ninja.cyclic": {
           "type": "boolean",
           "description": "whether cyclic jump.",
