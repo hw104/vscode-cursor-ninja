@@ -2,7 +2,7 @@
   "name": "cursor-ninja",
   "displayName": "Cursor Ninja",
   "description": "Move cursor like ninja.",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "publisher": "hw104",
   "engines": {
     "vscode": "^1.72.0"
@@ -32,6 +32,14 @@
         "title": "Cursor Ninja: Jump Indent Up"
       },
       {
+        "command": "cursor-ninja.jumpEdgeOfIndentUp",
+        "title": "Cursor Ninja: Jump to the start line of current indent block"
+      },
+      {
+        "command": "cursor-ninja.jumpEdgeOfIndentDown",
+        "title": "Cursor Ninja: Jump to the end line of current indent block"
+      },
+      {
         "command": "cursor-ninja.scrollToCenterCursor",
         "title": "Cursor Ninja: Scroll To Center Cursor"
       }
@@ -39,38 +47,10 @@
     "configuration": {
       "title": "Cursor Ninja",
       "properties": {
-        "cursor-ninja.emptyLineBehavior": {
-          "type": "string",
-          "description": "Jump behavior when the cursor in an empty line",
-          "default": "nonempty",
-          "enum": [
-            "empty",
-            "nonempty"
-          ],
-          "enumDescriptions": [
-            "Jump to next/previous empty line.",
-            "Jump to next/previous nonempty line."
-          ]
-        },
         "cursor-ninja.cyclic": {
           "type": "boolean",
           "description": "whether cyclic jump.",
           "default": true
-        },
-        "cursor-ninja.gapBehavior": {
-          "type": "string",
-          "description": "Jump behavior when the cursor in last/top line of the indent block.",
-          "default": "stop",
-          "enum": [
-            "parent",
-            "beyond",
-            "stop"
-          ],
-          "enumDescriptions": [
-            "Jump to next/previous parent indent line.",
-            "Crossing the gap",
-            "Will not jump."
-          ]
         },
         "cursor-ninja.ignoreLetters": {
           "type": "array",

@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.4.0
+
+- Jump to the start/end line of current indent block.
+- Fix empty line behavior.
+
 ## 0.3.3
 
 - Cyclic jumps within a block.

@@ -37,9 +37,9 @@ export class EditorRepo {
               l.firstNonWhitespaceCharacterIndex,
             isEmptyOrWhitespace: l.isEmptyOrWhitespace,
             indent:
-              l.isEmptyOrWhitespace && l.firstNonWhitespaceCharacterIndex == 0
+              /* l.isEmptyOrWhitespace && l.firstNonWhitespaceCharacterIndex == 0
                 ? -1
-                : l.firstNonWhitespaceCharacterIndex,
+                : */ l.firstNonWhitespaceCharacterIndex,
           };
         })
     );
@@ -68,7 +68,7 @@ export class EditorRepo {
 
   *#findNextIndentMatchedLine(
     { from, indent, direction }: FindLineParam,
-    { gapBehavior, emptyLineBehavior, ignoreLetters, ignoreRegExps }: Config
+    { gapBehavior, ignoreLetters, ignoreRegExps }: Config
   ): Generator<number, number | undefined, unknown> {
     const lineNums = this.#lineNumbers({ from, cyclic: false, direction });
 
@@ -92,17 +92,8 @@ export class EditorRepo {
         continue;
       }
 
-      if (l.indent === -1 && emptyLineBehavior === "nonempty") {
-        continue;
-      }
-
       if (l.indent < indent) {
-        if (gapBehavior === "parent") {
-          return lineNum;
-        }
-        if (gapBehavior === "stop") {
-          break;
-        }
+        return;
       }
 
       if (l.indent === indent) {
@@ -120,29 +111,25 @@ export class EditorRepo {
   }
 
   getLineByIndent(param: FindLineParam, config: Config): number | undefined {
-    const a = this.#findNextIndentMatchedLine(param, config);
-    const res = a.next();
+    const iter = this.#findNextIndentMatchedLine(param, config);
+    const res = iter.next();
     if (res.value != null) {
       return res.value;
     }
 
     if (res.value == null && res.done && config.cyclic) {
-      const rrr = this.#findNextIndentMatchedLine(
+      return this.getLastLineOfIndentBlock(
         { ...param, direction: param.direction.reverse() },
         config
       );
-      let result: number | undefined;
-      for (;;) {
-        const r = rrr.next();
-        if (r.value != null) {
-          result = r.value;
-        }
-        if (r.done) {
-          break;
-        }
-      }
-      return result;
     }
+  }
+
+  getLastLineOfIndentBlock(
+    param: FindLineParam,
+    config: Config
+  ): number | undefined {
+    return [...this.#findNextIndentMatchedLine(param, config)].at(-1);
   }
 
   setCursorLine(to: number, scrollToCenter = false) {
@@ -160,3 +147,6 @@ export class EditorRepo {
     );
   }
 }
+
+// TODO: gap behavior to stop only
+// TODO: goto last indent block or goto next parent

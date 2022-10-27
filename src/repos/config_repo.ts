@@ -7,7 +7,6 @@ export class ConfigRepo {
   get(): Config {
     const keys: Record<keyof Config, string> = {
       cyclic: "",
-      emptyLineBehavior: "",
       gapBehavior: "",
       ignoreLetters: "",
       ignoreRegExps: "",
