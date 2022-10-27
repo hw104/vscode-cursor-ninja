@@ -3,6 +3,7 @@ import { Direction } from "./models/direction";
 import { ConfigRepo } from "./repos/config_repo";
 import { EditorRepo } from "./repos/editor_repo";
 import { jumpByIndent } from "./usecases/jump_by_indent";
+import { jumpEdgeOfIndent } from "./usecases/jump_edge_of_indent";
 import { scrollToCenterCursor } from "./usecases/scroll_to_center";
 
 async function handler<T>(
@@ -39,6 +40,16 @@ export function activate(context: ExtensionContext) {
     commands.registerCommand("cursor-ninja.jumpIndentUp", () =>
       handler(context, async (_, editor, config) =>
         jumpByIndent(editor, config, Direction.prev())
+      )
+    ),
+    commands.registerCommand("cursor-ninja.jumpEdgeOfIndentDown", () =>
+      handler(context, async (_, editor, config) =>
+      jumpEdgeOfIndent(editor, config, Direction.next())
+      )
+    ),
+    commands.registerCommand("cursor-ninja.jumpEdgeOfIndentUp", () =>
+      handler(context, async (_, editor, config) =>
+        jumpEdgeOfIndent(editor, config, Direction.prev())
       )
     ),
     commands.registerCommand("cursor-ninja.scrollToCenterCursor", () =>

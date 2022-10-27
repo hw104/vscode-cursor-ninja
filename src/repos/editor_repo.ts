@@ -93,12 +93,7 @@ export class EditorRepo {
       }
 
       if (l.indent < indent) {
-        if (gapBehavior === "parent") {
-          return lineNum;
-        }
-        if (gapBehavior === "stop") {
-          return;
-        }
+        return;
       }
 
       if (l.indent === indent) {
@@ -123,13 +118,18 @@ export class EditorRepo {
     }
 
     if (res.value == null && res.done && config.cyclic) {
-      return [
-        ...this.#findNextIndentMatchedLine(
-          { ...param, direction: param.direction.reverse() },
-          config
-        ),
-      ].at(-1);
+      return this.getLastLineOfIndentBlock(
+        { ...param, direction: param.direction.reverse() },
+        config
+      );
     }
+  }
+
+  getLastLineOfIndentBlock(
+    param: FindLineParam,
+    config: Config
+  ): number | undefined {
+    return [...this.#findNextIndentMatchedLine(param, config)].at(-1);
   }
 
   setCursorLine(to: number, scrollToCenter = false) {
@@ -147,3 +147,6 @@ export class EditorRepo {
     );
   }
 }
+
+// TODO: gap behavior to stop only
+// TODO: goto last indent block or goto next parent
