@@ -2,7 +2,7 @@
   "name": "cursor-ninja",
   "displayName": "Cursor Ninja",
   "description": "Move cursor like ninja.",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "publisher": "hw104",
   "engines": {
     "vscode": "^1.72.0"
@@ -18,7 +18,14 @@
   "activationEvents": [
     "onCommand:cursor-ninja.jumpIndentDown",
     "onCommand:cursor-ninja.jumpIndentUp",
-    "onCommand:cursor-ninja.scrollToCenterCursor"
+    "onCommand:cursor-ninja.scrollToCenterCursor",
+    "onCommand:cursor-ninja.jumpToNextSiblingSymbol",
+    "onCommand:cursor-ninja.jumpToPreviousSiblingSymbol",
+    "onCommand:cursor-ninja.jumpToFirstSiblingSymbol",
+    "onCommand:cursor-ninja.jumpToLastSiblingSymbol",
+    "onCommand:cursor-ninja.jumpToCurrentSymbolStart",
+    "onCommand:cursor-ninja.jumpToNextSymbol",
+    "onCommand:cursor-ninja.jumpToPreviousSymbol"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -42,6 +49,34 @@
       {
         "command": "cursor-ninja.scrollToCenterCursor",
         "title": "Cursor Ninja: Scroll To Center Cursor"
+      },
+      {
+        "command": "cursor-ninja.jumpToNextSiblingSymbol",
+        "title": "Cursor Ninja: Jump To Next Sibling Symbol"
+      },
+      {
+        "command": "cursor-ninja.jumpToPreviousSiblingSymbol",
+        "title": "Cursor Ninja: Jump To Previous Sibling Symbol"
+      },
+      {
+        "command": "cursor-ninja.jumpToFirstSiblingSymbol",
+        "title": "Cursor Ninja: Jump To First Sibling Symbol"
+      },
+      {
+        "command": "cursor-ninja.jumpToLastSiblingSymbol",
+        "title": "Cursor Ninja: Jump To Last Sibling Symbol"
+      },
+      {
+        "command": "cursor-ninja.jumpToCurrentSymbolStart",
+        "title": "Cursor Ninja: Jump To current symbol start"
+      },
+      {
+        "command": "cursor-ninja.jumpToNextSymbol",
+        "title": "Cursor Ninja: Jump To next symbol"
+      },
+      {
+        "command": "cursor-ninja.jumpToPreviousSymbol",
+        "title": "Cursor Ninja: Jump To previous symbol"
       }
     ],
     "configuration": {

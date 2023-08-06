@@ -1,13 +1,32 @@
-# Cursor Ninja README
+# Cursor Ninja
 
-Move cursor like ninja.
+Move the cursor like a ninja 🥷.
+
+## Motivation
+
+Have you ever wanted to jump to the next/previous function, class or variable?  
+I have.
+
 
 ## Features
 
-- **Jump by indent**: `jumpIndentDown` / `jumpIndentUp`.
-  - configurations: `cyclic`, `gapBehavior`, `emptyLineBehavior`
-- **Scroll to cursor in center**: `scrollToCenterCursor`
-- ...more coming soon!
+Jump by symbol:
+- `jumpToNextSiblingSymbol`
+- `jumpToPreviousSiblingSymbol`
+- `jumpToFirstSiblingSymbol`
+- `jumpToLastSiblingSymbol`
+- `jumpToCurrentSymbolStart`
+- `jumpToNextSymbol`
+- `jumpToPreviousSymbol`
+
+Jump by indent:
+- `jumpIndentDown`
+- `jumpIndentUp`
+
+Scroll:
+- `scrollToCenterCursor`
+
+...more coming soon
 
 ## Keyboard Shortcuts
 
