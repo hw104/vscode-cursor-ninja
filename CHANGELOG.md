@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.5.0
+- Jump by symbol
+
 ## 0.4.0
 
 - Jump to the start/end line of current indent block.
