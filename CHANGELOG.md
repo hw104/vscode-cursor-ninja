@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.5.1
+- fix: Jump by symbol
+
 ## 0.5.0
 - Jump by symbol
 
