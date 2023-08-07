@@ -27,13 +27,17 @@ async function _getSymbols(): Promise<Symbol[]> {
   if (uri == null) {
     return [];
   }
-  const symbols = (await vscode.commands.executeCommand(
+  const symbols = await vscode.commands.executeCommand(
     "vscode.executeDocumentSymbolProvider",
     uri
-  )) as Symbol[];
-  return [...symbols].map((s) => ({
-    ...s,
-  }));
+  );
+  if (symbols == null) {
+    return [];
+  }
+  if (!Array.isArray(symbols)) {
+    throw new Error("symbols is not array");
+  }
+  return [...symbols].map((s) => ({ ...s }));
 }
 
 export function sortSymbols(symbols: Symbol[]): Symbol[] {
