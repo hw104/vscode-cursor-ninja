@@ -2,7 +2,11 @@ import { commands, ExtensionContext, window, workspace } from "vscode";
 import { Direction } from "./models/direction";
 import { ConfigRepo } from "./repos/config_repo";
 import { EditorRepo } from "./repos/editor_repo";
-import { jumpToNextSymbol, jumpToPreviousSymbol } from "./usecases/jmp_by_symol/jump_next_symbol";
+import { jumpBySymbolHandler } from "./usecases/jmp_by_symol/jump_by_symbol";
+import {
+  jumpToNextSymbol,
+  jumpToPreviousSymbol,
+} from "./usecases/jmp_by_symol/jump_next_symbol";
 import {
   jumpToCurrentSymbolStart,
   jumpToFirstSiblingSymbol,
@@ -37,15 +41,6 @@ async function handler<T>(
   }
 }
 
-async function handler2(cb: () => Promise<unknown>): Promise<void> {
-  try {
-    await cb();
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
 export function activate(context: ExtensionContext) {
   [
     commands.registerCommand("cursor-ninja.jumpIndentDown", () =>
@@ -69,25 +64,25 @@ export function activate(context: ExtensionContext) {
       )
     ),
     commands.registerCommand("cursor-ninja.jumpToNextSiblingSymbol", () =>
-      handler2(jumpToNextSiblingSymbol)
+      jumpBySymbolHandler(jumpToNextSiblingSymbol)
     ),
     commands.registerCommand("cursor-ninja.jumpToPreviousSiblingSymbol", () =>
-      handler2(jumpToPreviousSiblingSymbol)
+      jumpBySymbolHandler(jumpToPreviousSiblingSymbol)
     ),
     commands.registerCommand("cursor-ninja.jumpToFirstSiblingSymbol", () =>
-      handler2(jumpToFirstSiblingSymbol)
+      jumpBySymbolHandler(jumpToFirstSiblingSymbol)
     ),
     commands.registerCommand("cursor-ninja.jumpToLastSiblingSymbol", () =>
-      handler2(jumpToLastSiblingSymbol)
+      jumpBySymbolHandler(jumpToLastSiblingSymbol)
     ),
     commands.registerCommand("cursor-ninja.jumpToCurrentSymbolStart", () =>
-      handler2(jumpToCurrentSymbolStart)
+      jumpBySymbolHandler(jumpToCurrentSymbolStart)
     ),
     commands.registerCommand("cursor-ninja.jumpToNextSymbol", () =>
-      handler2(jumpToNextSymbol)
+      jumpBySymbolHandler(jumpToNextSymbol)
     ),
     commands.registerCommand("cursor-ninja.jumpToPreviousSymbol", () =>
-      handler2(jumpToPreviousSymbol)
+      jumpBySymbolHandler(jumpToPreviousSymbol)
     ),
   ].forEach((cmd) => context.subscriptions.push(cmd));
 }

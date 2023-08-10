@@ -3,16 +3,15 @@ import {
   findNextSymbolByStart,
   findPreviousSymbolByStart,
   flatSymbols,
-  getSymbols,
   jumpToSymbol,
+  Symbol,
 } from "./jump_by_symbol";
 
-export async function jumpToNextSymbol() {
+export async function jumpToNextSymbol(symbols: Symbol[]) {
   const position = vscode.window.activeTextEditor?.selection.active;
   if (position == null) {
     return;
   }
-  const symbols = await getSymbols();
   const flatten = flatSymbols(symbols);
   const to = findNextSymbolByStart(flatten, position);
 
@@ -21,12 +20,11 @@ export async function jumpToNextSymbol() {
   }
 }
 
-export async function jumpToPreviousSymbol() {
+export async function jumpToPreviousSymbol(symbols: Symbol[]) {
   const position = vscode.window.activeTextEditor?.selection.active;
   if (position == null) {
     return;
   }
-  const symbols = await getSymbols();
   const flatten = flatSymbols(symbols);
   const to = findPreviousSymbolByStart(flatten, position);
 

@@ -1,9 +1,15 @@
 # Change Log
 
+## 0.6.0
+
+- improve: change emptyline `Jump by symbol` behavior.
+
 ## 0.5.1
-- fix: Jump by symbol
+
+- fix: `Jump by symbol`
 
 ## 0.5.0
+
 - Jump by symbol
 
 ## 0.4.0
