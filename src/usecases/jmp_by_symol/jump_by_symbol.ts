@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-interface Symbol {
+export interface Symbol {
   name: string;
   kind: "Variable" | string;
   location: {
@@ -163,3 +163,13 @@ export function findPreviousSymbolByStart(
     .reverse()
     .find((s) => s.range.start.compareTo(position) < 0);
 }
+
+export async function jumpBySymbolHandler(f: (s: Symbol[]) => Promise<void>) {
+  try {
+    await f(await getSymbols());
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+

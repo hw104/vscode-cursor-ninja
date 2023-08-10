@@ -4,29 +4,24 @@ import {
   findPreviousSymbolByStart,
   getSiblings,
   getSymbolOf,
-  getSymbols,
   jumpToSymbol,
   searchLongestRoutes,
+  Symbol,
 } from "./jump_by_symbol";
+import { jumpToNextSymbol, jumpToPreviousSymbol } from "./jump_next_symbol";
 
-async function getSymbolsAndLongestLoute() {
-  const symbols = await getSymbols();
+export async function jumpToNextSiblingSymbol(symbols: Symbol[]) {
   const indexes = searchLongestRoutes(
     symbols,
     vscode.window.activeTextEditor?.selection.active
   );
-
-  return { symbols, indexes };
-}
-
-export async function jumpToNextSiblingSymbol() {
-  const { indexes, symbols } = await getSymbolsAndLongestLoute();
   if (indexes == null) {
-    return;
+    return jumpToNextSymbol(symbols.map((s) => ({ ...s, children: [] })));
   }
 
+  const sibilings = getSiblings(symbols, indexes);
   const to = findNextSymbolByStart(
-    getSiblings(symbols, indexes),
+    sibilings,
     vscode.window.activeTextEditor!.selection.active
   );
   if (to != null) {
@@ -34,14 +29,18 @@ export async function jumpToNextSiblingSymbol() {
   }
 }
 
-export async function jumpToPreviousSiblingSymbol() {
-  const { indexes, symbols } = await getSymbolsAndLongestLoute();
+export async function jumpToPreviousSiblingSymbol(symbols: Symbol[]) {
+  const indexes = searchLongestRoutes(
+    symbols,
+    vscode.window.activeTextEditor?.selection.active
+  );
   if (indexes == null) {
-    return;
+    return jumpToPreviousSymbol(symbols.map((s) => ({ ...s, children: [] })));
   }
 
+  const sibilings = getSiblings(symbols, indexes);
   const to = findPreviousSymbolByStart(
-    getSiblings(symbols, indexes),
+    sibilings,
     vscode.window.activeTextEditor!.selection.active
   );
   if (to != null) {
@@ -49,8 +48,11 @@ export async function jumpToPreviousSiblingSymbol() {
   }
 }
 
-export async function jumpToFirstSiblingSymbol() {
-  const { indexes, symbols } = await getSymbolsAndLongestLoute();
+export async function jumpToFirstSiblingSymbol(symbols: Symbol[]) {
+  const indexes = searchLongestRoutes(
+    symbols,
+    vscode.window.activeTextEditor?.selection.active
+  );
   if (indexes == null) {
     return;
   }
@@ -61,8 +63,11 @@ export async function jumpToFirstSiblingSymbol() {
   }
 }
 
-export async function jumpToLastSiblingSymbol() {
-  const { indexes, symbols } = await getSymbolsAndLongestLoute();
+export async function jumpToLastSiblingSymbol(symbols: Symbol[]) {
+  const indexes = searchLongestRoutes(
+    symbols,
+    vscode.window.activeTextEditor?.selection.active
+  );
   if (indexes == null) {
     return;
   }
@@ -73,8 +78,11 @@ export async function jumpToLastSiblingSymbol() {
   }
 }
 
-export async function jumpToCurrentSymbolStart() {
-  const { indexes, symbols } = await getSymbolsAndLongestLoute();
+export async function jumpToCurrentSymbolStart(symbols: Symbol[]) {
+  const indexes = searchLongestRoutes(
+    symbols,
+    vscode.window.activeTextEditor?.selection.active
+  );
   if (indexes == null) {
     return;
   }
