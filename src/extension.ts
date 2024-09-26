@@ -11,8 +11,8 @@ import {
   jumpToCurrentSymbolStart,
   jumpToFirstSiblingSymbol,
   jumpToLastSiblingSymbol,
-  jumpToNextSiblingSymbol,
-  jumpToPreviousSiblingSymbol,
+  jumpToParentSymbol,
+  jumpToSiblingSymbol,
 } from "./usecases/jmp_by_symol/jump_to_next_s";
 import { jumpByIndent } from "./usecases/jump_by_indent";
 import { jumpEdgeOfIndent } from "./usecases/jump_edge_of_indent";
@@ -64,10 +64,16 @@ export function activate(context: ExtensionContext) {
       )
     ),
     commands.registerCommand("cursor-ninja.jumpToNextSiblingSymbol", () =>
-      jumpBySymbolHandler(jumpToNextSiblingSymbol)
+      jumpBySymbolHandler((...arg) => jumpToSiblingSymbol(...arg, "next"))
     ),
     commands.registerCommand("cursor-ninja.jumpToPreviousSiblingSymbol", () =>
-      jumpBySymbolHandler(jumpToPreviousSiblingSymbol)
+      jumpBySymbolHandler((...arg) => jumpToSiblingSymbol(...arg, "previous"))
+    ),
+    commands.registerCommand("cursor-ninja.jumpToNextParentSymbol", () =>
+      jumpBySymbolHandler((...arg) => jumpToParentSymbol(...arg, "next"))
+    ),
+    commands.registerCommand("cursor-ninja.jumpToPreviousParentSymbol", () =>
+      jumpBySymbolHandler((...arg) => jumpToParentSymbol(...arg, "previous"))
     ),
     commands.registerCommand("cursor-ninja.jumpToFirstSiblingSymbol", () =>
       jumpBySymbolHandler(jumpToFirstSiblingSymbol)

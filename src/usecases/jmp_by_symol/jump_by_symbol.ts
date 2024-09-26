@@ -15,6 +15,19 @@ export interface Symbol {
   range: vscode.Range;
   containerName: string;
   children: Symbol[];
+  selectionRange: vscode.DocumentSymbol["selectionRange"];
+}
+
+export function deepEqualSymbol(a: Symbol, b: Symbol): boolean {
+  return (
+    a.name === b.name &&
+    a.kind === b.kind &&
+    a.location.uri.fsPath === b.location.uri.fsPath &&
+    a.range.isEqual(b.range) &&
+    a.containerName === b.containerName &&
+    a.children.length === b.children.length &&
+    a.children.every((c, i) => deepEqualSymbol(c, b.children[i]))
+  );
 }
 
 function compareSymbol(a: Symbol, b: Symbol): number {
@@ -129,12 +142,26 @@ export function getSiblings(symbols: Symbol[], indexes: number[]): Symbol[] {
 }
 
 export function jumpToSymbol(symbol: Symbol) {
+  jumpToSymbolStartOrEnd(symbol, "start");
+}
+
+export function jumpToSymbolStartOrEnd(
+  symbol: Symbol,
+  direction: "start" | "end"
+) {
+  jumpAndReveal(
+    direction === "start" ? symbol.range.start : symbol.range.end,
+    new vscode.Range(symbol.range.start, symbol.range.end)
+  );
+}
+
+export function jumpAndReveal(position: vscode.Position, range: vscode.Range) {
   vscode.window.activeTextEditor!.selection = new vscode.Selection(
-    symbol.range.start,
-    symbol.range.start
+    position,
+    position
   );
   vscode.window.activeTextEditor?.revealRange(
-    new vscode.Range(symbol.range.start, symbol.range.end),
+    new vscode.Range(range.start, range.end),
     vscode.TextEditorRevealType.Default
   );
 }
@@ -164,12 +191,50 @@ export function findPreviousSymbolByStart(
     .find((s) => s.range.start.compareTo(position) < 0);
 }
 
-export async function jumpBySymbolHandler(f: (s: Symbol[]) => Promise<void>) {
+export async function jumpBySymbolHandler(
+  f: (s: Symbol[], position: vscode.Position | undefined) => Promise<void>
+) {
   try {
-    await f(await getSymbols());
+    await f(
+      await getSymbols(),
+      vscode.window.activeTextEditor?.selection.active
+    );
   } catch (error) {
     console.error(error);
     throw error;
   }
 }
 
+export function toClosedRange(range: vscode.Range): vscode.Range {
+  return new vscode.Range(range.start, range.end.translate(undefined, -1));
+}
+
+export function getSmallestSymbol(
+  from: Symbol[] | Symbol,
+  position: vscode.Position
+): { parent?: Symbol; symbol: Symbol } | undefined {
+  const symbols = Array.isArray(from) ? from : from.children;
+  const parent = Array.isArray(from) ? undefined : from;
+  const symbol = symbols.find((s) =>
+    new SymbolWrap(s).bodyRange.contains(position)
+  );
+  if (symbol == null) {
+    return undefined;
+  }
+  return getSmallestSymbol(symbol, position) ?? { parent, symbol };
+}
+
+export class SymbolWrap {
+  constructor(public readonly symbol: Symbol) {}
+
+  get bodyRange() {
+    return new vscode.Range(
+      this.symbol.selectionRange.end,
+      this.symbol.range.end
+    );
+  }
+
+  get nameRange() {
+    return this.symbol.selectionRange;
+  }
+}

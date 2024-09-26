@@ -77,6 +77,14 @@
       {
         "command": "cursor-ninja.jumpToPreviousSymbol",
         "title": "Cursor Ninja: Jump To previous symbol"
+      },
+      {
+        "command": "cursor-ninja.jumpToNextParentSymbol",
+        "title": "Cursor Ninja: Jump To Next Parent Symbol"
+      },
+      {
+        "command": "cursor-ninja.jumpToPreviousParentSymbol",
+        "title": "Cursor Ninja: Jump To Previous Parent Symbol"
       }
     ],
     "configuration": {
