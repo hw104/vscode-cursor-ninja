@@ -13,6 +13,8 @@ I have.
 Jump by symbol:
 - `jumpToNextSiblingSymbol`
 - `jumpToPreviousSiblingSymbol`
+- `jumpToNextParentSymbol`
+- `jumpToPreviousParentSymbol`
 - `jumpToFirstSiblingSymbol`
 - `jumpToLastSiblingSymbol`
 - `jumpToCurrentSymbolStart`

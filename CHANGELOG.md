@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.7.0
+
+- improve: `Jump to next/previous symbol` behavior
+- `Jump to next/previous parent symbol`
+
 ## 0.6.0
 
 - improve: change emptyline `Jump by symbol` behavior.
