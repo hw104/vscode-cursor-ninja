@@ -2,13 +2,14 @@
 
 Move the cursor like a ninja 🥷.
 
+![demo](./demo.gif)
+
 ## Motivation
 
 Have you ever wanted to jump to the next/previous function, class or variable?  
 I have.
 
-
-## Features
+## Demo
 
 Jump by symbol:
 - `jumpToNextSiblingSymbol`
