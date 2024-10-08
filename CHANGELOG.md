@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.8.0
+
+- improve: `Jump to next/previous parent` behavior
+
 ## 0.7.0
 
 - improve: `Jump to next/previous symbol` behavior

@@ -9,6 +9,7 @@ import {
   Symbol,
   toClosedRange,
 } from "./jump_by_symbol";
+import { isDebugMode } from "../../utils/debug_mode";
 
 export async function jumpToSiblingSymbol(
   symbols: Symbol[],
@@ -18,9 +19,13 @@ export async function jumpToSiblingSymbol(
   if (position == null) {
     return;
   }
-  console.time();
+  isDebugMode && console.time();
   const to = _jumpToSiblingSymbol(parseSymbols(symbols), position, direction);
-  console.timeEnd();
+  if (isDebugMode) {
+    console.timeEnd();
+    console.log("to", to);
+  }
+
   if (to != null) {
     jumpAndReveal(to.position, to.range);
   }
@@ -38,14 +43,13 @@ export async function jumpToParentSymbol(
   if (smallest == null) {
     return;
   }
+  isDebugMode && console.log("smallest", smallest);
 
-  const to = _jumpToSiblingSymbol(
-    parseSymbols(symbols),
-    smallest.parent != null && smallest.symbol.children.length === 0
-      ? smallest.parent.selectionRange.end
-      : smallest.symbol.selectionRange.end,
-    direction
-  );
+  if (smallest.symbol.children.length !== 0) {
+    smallest.symbol.children = [];
+  }
+
+  const to = _jumpToSiblingSymbol(parseSymbols(symbols), position, direction);
   if (to != null) {
     jumpAndReveal(to.position, to.range);
   }
