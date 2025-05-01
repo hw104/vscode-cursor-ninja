@@ -29,10 +29,7 @@ jobs:
       - name: Published version
         id: published_version
         run: |
-          echo start
           npm run --silent vsce -- show hw104.cursor-ninja --json > tmp.json
-          echo end
-          cat tmp.json
           if [ -s tmp.json ]; then
             echo "VERSIONS=$(jq -c '[.versions[] | .version]' tmp.json)"
             echo "VERSIONS=$(jq -c '[.versions[] | .version]' tmp.json)" >> $GITHUB_ENV
@@ -40,6 +37,9 @@ jobs:
             echo failed
             exit 1
           fi
+      - run: echo ${{ fromJson(steps.get_version.outputs.VERSION) }}
+      - run: echo ${{ fromJson(steps.published_version.outputs.VERSIONS) }}
+      - run: echo ${{ contains(fromJSON(steps.published_version.outputs.VERSIONS), steps.get_version.outputs.VERSION) }}
       - name: Publish
         if: ${{ !contains(fromJSON(steps.published_version.outputs.VERSIONS), steps.get_version.outputs.VERSION) }}
         env:
