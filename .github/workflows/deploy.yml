@@ -17,7 +17,7 @@ jobs:
 
       - name: Get version
         id: get_version
-        run: echo "VERSION=$(jq -r '.version' package.json)" >> $GITHUB_ENV
+        run: echo "VERSION=$(jq '.version' package.json)" >> $GITHUB_OUTPUT
 
       - uses: actions/setup-node@v4
         with:
@@ -32,19 +32,28 @@ jobs:
           npm run --silent vsce -- show hw104.cursor-ninja --json > tmp.json
           if [ -s tmp.json ]; then
             echo "VERSIONS=$(jq -c '[.versions[] | .version]' tmp.json)"
-            echo "VERSIONS=$(jq -c '[.versions[] | .version]' tmp.json)" >> $GITHUB_ENV
+            echo "VERSIONS=$(jq -c '[.versions[] | .version]' tmp.json)" >> $GITHUB_OUTPUT
           else
             echo failed
             exit 1
           fi
+
       - name: test0
         run: echo ${{ fromJson('"aaa"') }}
-      - name: test1
-        run: echo "${{ fromJson(steps.get_version.outputs.VERSION) }}"
+
+      - name: test11
+        run: echo ${{ steps.get_version.outputs.VERSION }}
+      - name: test12
+        run: echo ${{ steps.get_version.outputs.VERSION2 }}
+      - name: test13
+        run: echo ${{ fromJSON(steps.get_version.outputs.VERSION) }}
+
       - name: test2
-        run: echo "${{ fromJson(steps.published_version.outputs.VERSIONS) }}"
+        run: echo "${{ fromJSON(steps.published_version.outputs.VERSIONS) }}"
+
       - name: test3
         run: echo "${{ contains(fromJSON(steps.published_version.outputs.VERSIONS), steps.get_version.outputs.VERSION) }}"
+      
       - name: Publish
         if: ${{ !contains(fromJSON(steps.published_version.outputs.VERSIONS), steps.get_version.outputs.VERSION) }}
         env:
