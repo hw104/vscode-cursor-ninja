@@ -11,25 +11,12 @@ I have.
 
 ## Demo
 
-Jump by symbol:
 - `jumpToNextSiblingSymbol`
 - `jumpToPreviousSiblingSymbol`
-- `jumpToNextParentSymbol`
-- `jumpToPreviousParentSymbol`
 - `jumpToFirstSiblingSymbol`
 - `jumpToLastSiblingSymbol`
-- `jumpToCurrentSymbolStart`
 - `jumpToNextSymbol`
 - `jumpToPreviousSymbol`
-
-Jump by indent:
-- `jumpIndentDown`
-- `jumpIndentUp`
-
-Scroll:
-- `scrollToCenterCursor`
-
-...more coming soon
 
 ## Keyboard Shortcuts
 
