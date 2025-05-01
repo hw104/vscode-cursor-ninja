@@ -14,53 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Get version
-        id: get_version
-        run: echo "VERSION=$(jq '.version' package.json)" >> $GITHUB_OUTPUT
-
       - uses: actions/setup-node@v4
         with:
           node-version-file: ".tool-versions"
-
       - run: npm install
       - run: npm run compile
-
-      - name: Published version
-        id: published_version
-        run: |
-          npm run --silent vsce -- show hw104.cursor-ninja --json > tmp.json
-          if [ -s tmp.json ]; then
-            echo "VERSIONS=$(jq -c '[.versions[] | .version]' tmp.json)"
-            echo "VERSIONS=$(jq -c '[.versions[] | .version]' tmp.json)" >> $GITHUB_OUTPUT
-          else
-            echo failed
-            exit 1
-          fi
-
-      - name: test0
-        run: echo ${{ fromJson('"aaa"') }}
-
-      - name: test11
-        run: echo ${{ steps.get_version.outputs.VERSION }}
-      - name: test12
-        run: echo ${{ steps.get_version.outputs.VERSION2 }}
-      - name: test13
-        run: echo ${{ fromJSON(steps.get_version.outputs.VERSION) }}
-
-      - name: test2
-        run: echo "${{ fromJSON(steps.published_version.outputs.VERSIONS) }}"
-
-      - name: test3
-        run: echo "${{ contains(fromJSON(steps.published_version.outputs.VERSIONS), steps.get_version.outputs.VERSION) }}"
-      
       - name: Publish
-        if: ${{ !contains(fromJSON(steps.published_version.outputs.VERSIONS), steps.get_version.outputs.VERSION) }}
+        run: npm run vsce -- publish --no-update-package-json --no-git-tag-version --skip-duplicate
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-        run: |
-          npm run vsce -- publish \
-            --no-update-package-json \
-            --no-git-tag-version
 
     #   - run: "npm run vs:publish -- --no-sandbox --no-verify --no-cache --no-telemetry --no-update-notifier --no-progress --no-color"
