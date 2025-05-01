@@ -18,9 +18,7 @@ jobs:
 
       - name: Get version
         id: get_version
-        run: |
-          echo "VERSION=$(jq '.version' package.json)" >> $GITHUB_OUTPUT
-          echo "VERSION2=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
+        run: echo "VERSION=$(jq '.version' package.json)" >> $GITHUB_OUTPUT
 
       - uses: actions/setup-node@v4
         with:
@@ -50,8 +48,6 @@ jobs:
         run: echo ${{ steps.get_version.outputs.VERSION2 }}
       - name: test13
         run: echo ${{ fromJSON(steps.get_version.outputs.VERSION) }}
-      - name: test13
-        run: echo ${{ fromJSON(steps.get_version.outputs.VERSION2) }}
 
       - name: test2
         run: echo "${{ fromJSON(steps.published_version.outputs.VERSIONS) }}"
