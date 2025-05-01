@@ -21,31 +21,31 @@
     "commands": [
       {
         "command": "cursor-ninja.debugSymbols",
-        "title": "Cursor Ninja 2: Debug Symbols"
+        "title": "Cursor Ninja: Debug Symbols"
       },
       {
         "command": "cursor-ninja.jumpToNextSiblingSymbol",
-        "title": "Cursor Ninja 2: Jump To Next Sibling Symbol"
+        "title": "Cursor Ninja: Jump To Next Sibling Symbol"
       },
       {
         "command": "cursor-ninja.jumpToPreviousSiblingSymbol",
-        "title": "Cursor Ninja 2: Jump To Previous Sibling Symbol"
+        "title": "Cursor Ninja: Jump To Previous Sibling Symbol"
       },
       {
         "command": "cursor-ninja.jumpToFirstSiblingSymbol",
-        "title": "Cursor Ninja 2: Jump To First Sibling Symbol"
+        "title": "Cursor Ninja: Jump To First Sibling Symbol"
       },
       {
         "command": "cursor-ninja.jumpToLastSiblingSymbol",
-        "title": "Cursor Ninja 2: Jump To Last Sibling Symbol"
+        "title": "Cursor Ninja: Jump To Last Sibling Symbol"
       },
       {
         "command": "cursor-ninja.jumpToNextSymbol",
-        "title": "Cursor Ninja 2: Jump To next symbol"
+        "title": "Cursor Ninja: Jump To next symbol"
       },
       {
         "command": "cursor-ninja.jumpToPreviousSymbol",
-        "title": "Cursor Ninja 2: Jump To previous symbol"
+        "title": "Cursor Ninja: Jump To previous symbol"
       }
     ],
     "configuration": {

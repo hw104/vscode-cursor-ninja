@@ -54,17 +54,5 @@ export class DebugSymbolsCommand extends Command {
     for (const [key, value] of Object.entries(result)) {
       output.appendLine(`${key}:` + value?.toString(editor.document.getText));
     }
-
-    console.log(
-      new Position(3, 3).isBefore(new Position(3, 3)),
-      new Position(3, 3).isAfter(new Position(3, 3)),
-      new Range(new Position(1, 1), new Position(2, 10)).contains(
-        new Position(1, 1)
-      ),
-      new Range(new Position(1, 1), new Position(2, 10)).contains(
-        new Position(2, 10)
-      )
-    );
-    new Range(new Position(1, 1), new Position(2, 10));
   }
 }
