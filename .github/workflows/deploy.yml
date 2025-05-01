@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - deploy
     paths:
       - "package.json"
       - ".github/workflows/deploy.yml"
@@ -17,7 +18,7 @@ jobs:
 
       - name: Get version
         id: get_version
-        run: echo "VERSION=$(jq -r '.version' package.json)" >> $GITHUB_ENV
+        run: echo "VERSION=$(jq '.version' package.json)" >> $GITHUB_ENV
 
       - uses: actions/setup-node@v4
         with:
@@ -39,6 +40,8 @@ jobs:
           fi
       - name: test0
         run: echo ${{ fromJson('"aaa"') }}
+      - name: test11
+        run: echo "${{ steps.get_version.outputs.VERSION }}"
       - name: test1
         run: echo "${{ fromJson(steps.get_version.outputs.VERSION) }}"
       - name: test2
