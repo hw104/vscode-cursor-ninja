@@ -37,9 +37,12 @@ jobs:
             echo failed
             exit 1
           fi
-      - run: echo ${{ fromJson(steps.get_version.outputs.VERSION) }}
-      - run: echo ${{ fromJson(steps.published_version.outputs.VERSIONS) }}
-      - run: echo ${{ contains(fromJSON(steps.published_version.outputs.VERSIONS), steps.get_version.outputs.VERSION) }}
+      - name: test1
+        run: echo "${{ fromJson(steps.get_version.outputs.VERSION) }}"
+      - name: test2
+        run: echo "${{ fromJson(steps.published_version.outputs.VERSIONS) }}"
+      - name: test3
+        run: echo "${{ contains(fromJSON(steps.published_version.outputs.VERSIONS), steps.get_version.outputs.VERSION) }}"
       - name: Publish
         if: ${{ !contains(fromJSON(steps.published_version.outputs.VERSIONS), steps.get_version.outputs.VERSION) }}
         env:
