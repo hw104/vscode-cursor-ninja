@@ -1,0 +1,52 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "package.json"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get version
+        id: get_version
+        run: echo "VERSION=$(jq -r '.version' package.json)" >> $GITHUB_ENV
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".tool-versions"
+
+      - run: npm install
+      - run: npm run compile
+      #   - run: "npm run vs:package"
+
+      - run: npm run vsce login
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Published version
+        id: published_version
+        run: |
+          npm run --silent vsce -- show hw104.cursor-ninja --json \
+            | jq -r '.versions[] | .version' \
+            | grep "$(jq -r '.version' package.json)" \
+            || echo "NEW_VERSION=true" >> $GITHUB_ENV
+      - name: Publish
+        if: ${{ steps.published_version.outputs.NEW_VERSION == 'true' }}
+        run: |
+          npm run vsce -- publish \
+            --no-sandbox \
+            --no-verify \
+            --no-cache \
+            --no-telemetry \
+            --no-update-notifier \
+            --no-progress \
+            --no-color
+
+    #   - run: "npm run vs:publish -- --no-sandbox --no-verify --no-cache --no-telemetry --no-update-notifier --no-progress --no-color"

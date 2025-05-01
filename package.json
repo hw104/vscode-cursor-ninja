@@ -2,7 +2,7 @@
   "name": "cursor-ninja",
   "displayName": "Cursor Ninja",
   "description": "Move the cursor like a ninja.",
-  "version": "0.9.0",
+  "version": "0.8.0",
   "publisher": "hw104",
   "engines": {
     "vscode": "^1.99.0"
@@ -67,7 +67,8 @@
     "lint": "eslint src",
     "test": "vscode-test --help",
     "vs:package": "vsce package",
-    "vs:publish": "vsce publish"
+    "vs:publish": "vsce publish",
+    "vsce": "vsce"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
