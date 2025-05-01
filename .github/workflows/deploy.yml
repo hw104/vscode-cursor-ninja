@@ -30,7 +30,9 @@ jobs:
         id: published_version
         run: |
           npm run --silent vsce -- show hw104.cursor-ninja --json > tmp.json
+          cat tmp.json
           if [ -s tmp.json ]; then
+            echo "VERSIONS=$(jq -c '[.versions[] | .version]' tmp.json)"
             echo "VERSIONS=$(jq -c '[.versions[] | .version]' tmp.json)" >> $GITHUB_ENV
           else
             exit 1
