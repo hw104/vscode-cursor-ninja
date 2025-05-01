@@ -2,10 +2,10 @@
   "name": "cursor-ninja",
   "displayName": "Cursor Ninja",
   "description": "Move the cursor like a ninja.",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "publisher": "hw104",
   "engines": {
-    "vscode": "^1.72.0"
+    "vscode": "^1.99.0"
   },
   "categories": [
     "Other"
@@ -15,76 +15,37 @@
     "url": "https://github.com/hw104/vscode-cursor-ninja.git"
   },
   "license": "MIT",
-  "activationEvents": [
-    "onCommand:cursor-ninja.jumpIndentDown",
-    "onCommand:cursor-ninja.jumpIndentUp",
-    "onCommand:cursor-ninja.scrollToCenterCursor",
-    "onCommand:cursor-ninja.jumpToNextSiblingSymbol",
-    "onCommand:cursor-ninja.jumpToPreviousSiblingSymbol",
-    "onCommand:cursor-ninja.jumpToFirstSiblingSymbol",
-    "onCommand:cursor-ninja.jumpToLastSiblingSymbol",
-    "onCommand:cursor-ninja.jumpToCurrentSymbolStart",
-    "onCommand:cursor-ninja.jumpToNextSymbol",
-    "onCommand:cursor-ninja.jumpToPreviousSymbol"
-  ],
+  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "cursor-ninja.jumpIndentDown",
-        "title": "Cursor Ninja: Jump Indent Down"
-      },
-      {
-        "command": "cursor-ninja.jumpIndentUp",
-        "title": "Cursor Ninja: Jump Indent Up"
-      },
-      {
-        "command": "cursor-ninja.jumpEdgeOfIndentUp",
-        "title": "Cursor Ninja: Jump to the start line of current indent block"
-      },
-      {
-        "command": "cursor-ninja.jumpEdgeOfIndentDown",
-        "title": "Cursor Ninja: Jump to the end line of current indent block"
-      },
-      {
-        "command": "cursor-ninja.scrollToCenterCursor",
-        "title": "Cursor Ninja: Scroll To Center Cursor"
+        "command": "cursor-ninja.debugSymbols",
+        "title": "Cursor Ninja 2: Debug Symbols"
       },
       {
         "command": "cursor-ninja.jumpToNextSiblingSymbol",
-        "title": "Cursor Ninja: Jump To Next Sibling Symbol"
+        "title": "Cursor Ninja 2: Jump To Next Sibling Symbol"
       },
       {
         "command": "cursor-ninja.jumpToPreviousSiblingSymbol",
-        "title": "Cursor Ninja: Jump To Previous Sibling Symbol"
+        "title": "Cursor Ninja 2: Jump To Previous Sibling Symbol"
       },
       {
         "command": "cursor-ninja.jumpToFirstSiblingSymbol",
-        "title": "Cursor Ninja: Jump To First Sibling Symbol"
+        "title": "Cursor Ninja 2: Jump To First Sibling Symbol"
       },
       {
         "command": "cursor-ninja.jumpToLastSiblingSymbol",
-        "title": "Cursor Ninja: Jump To Last Sibling Symbol"
-      },
-      {
-        "command": "cursor-ninja.jumpToCurrentSymbolStart",
-        "title": "Cursor Ninja: Jump To current symbol start"
+        "title": "Cursor Ninja 2: Jump To Last Sibling Symbol"
       },
       {
         "command": "cursor-ninja.jumpToNextSymbol",
-        "title": "Cursor Ninja: Jump To next symbol"
+        "title": "Cursor Ninja 2: Jump To next symbol"
       },
       {
         "command": "cursor-ninja.jumpToPreviousSymbol",
-        "title": "Cursor Ninja: Jump To previous symbol"
-      },
-      {
-        "command": "cursor-ninja.jumpToNextParentSymbol",
-        "title": "Cursor Ninja: Jump To Next Parent Symbol"
-      },
-      {
-        "command": "cursor-ninja.jumpToPreviousParentSymbol",
-        "title": "Cursor Ninja: Jump To Previous Parent Symbol"
+        "title": "Cursor Ninja 2: Jump To previous symbol"
       }
     ],
     "configuration": {
@@ -94,48 +55,30 @@
           "type": "boolean",
           "description": "whether cyclic jump.",
           "default": true
-        },
-        "cursor-ninja.ignoreLetters": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "markdownDescription": "Ignore lines consisting only of these texts. e.g. `;`, `(`, `)`, `{`, `}`, `end`, `done`",
-          "default": []
-        },
-        "cursor-ninja.ignoreRegExps": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "markdownDescription": "Ignore lines that match these regular expressions",
-          "default": []
         }
       }
     }
   },
   "scripts": {
-    "vscode:prepublish": "yarn run compile",
-    "vs:package": "vsce package --yarn",
-    "vs:publish": "vsce publish --yarn",
+    "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "yarn run compile && yarn run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test --help",
+    "package": "vsce package",
+    "publish": "vsce publish"
   },
   "devDependencies": {
-    "@types/glob": "^8.0.0",
-    "@types/mocha": "^10.0.0",
-    "@types/node": "16.x",
-    "@types/vscode": "^1.72.0",
-    "@typescript-eslint/eslint-plugin": "^5.38.1",
-    "@typescript-eslint/parser": "^5.38.1",
-    "@vscode/test-electron": "^2.1.5",
-    "eslint": "^8.24.0",
-    "glob": "^8.0.3",
-    "mocha": "^10.0.0",
-    "typescript": "^4.8.4",
-    "vsce": "^2.11.0"
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.99.0",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.3.2",
+    "eslint": "^9.23.0",
+    "typescript": "^5.8.2"
   }
 }
