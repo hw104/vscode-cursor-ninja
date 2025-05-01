@@ -2,7 +2,7 @@
   "name": "cursor-ninja",
   "displayName": "Cursor Ninja",
   "description": "Move the cursor like a ninja.",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "publisher": "hw104",
   "engines": {
     "vscode": "^1.99.0"
