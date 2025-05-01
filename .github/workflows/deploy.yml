@@ -24,11 +24,6 @@ jobs:
 
       - run: npm install
       - run: npm run compile
-      #   - run: "npm run vs:package"
-
-      - run: npm run vsce login
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
       - name: Published version
         id: published_version
@@ -37,16 +32,15 @@ jobs:
             | jq -r '.versions[] | .version' \
             | grep "$(jq -r '.version' package.json)" \
             || echo "NEW_VERSION=true" >> $GITHUB_ENV
+
       - name: Publish
         if: ${{ steps.published_version.outputs.NEW_VERSION == 'true' }}
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
           npm run vsce -- publish \
-            --no-sandbox \
-            --no-verify \
-            --no-cache \
-            --no-telemetry \
-            --no-update-notifier \
-            --no-progress \
-            --no-color
+            --no-update-package-json \
+            --no-git-tag-version
+
 
     #   - run: "npm run vs:publish -- --no-sandbox --no-verify --no-cache --no-telemetry --no-update-notifier --no-progress --no-color"
