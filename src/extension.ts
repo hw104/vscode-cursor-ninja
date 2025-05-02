@@ -4,9 +4,12 @@ import { JumpToSiblingSymbolCommand } from "./commands/jump-to-next-sibling-symb
 import { commandTimer } from "./command/middleware";
 import { JumpToNextSymbolCommand } from "./commands/jump-to-next-symbol";
 import { JumpToFirstSiblingSymbolCommand } from "./commands/jump-to-first-sibling";
+import { ExtensionMode } from "vscode";
 
 export function activate(context: vscode.ExtensionContext) {
-  const middleware = [commandTimer()];
+  const middleware =
+    context.extensionMode === ExtensionMode.Production ? [commandTimer()] : [];
+
   const commands = [
     new DebugSymbolsCommand(context, "cursor-ninja.debugSymbols", [
       commandTimer(),

@@ -1,9 +1,10 @@
 import * as vscode from "vscode";
 import { Command, CommandMiddleware } from "../command/command";
 import { ensureActiveEditor, jumpAndRevealCursor } from "../lib/editor";
+import { useCacheAsync } from "../lib/memory_cache";
 import { getCursorPosition } from "../lib/position";
 import { SymbolTree } from "../lib/symbol_tree";
-import { getSymbols } from "../lib/symbols";
+import { getSymbols, getSymbolsCacheKey } from "../lib/symbols";
 
 export class JumpToFirstSiblingSymbolCommand extends Command {
   constructor(
@@ -18,8 +19,10 @@ export class JumpToFirstSiblingSymbolCommand extends Command {
   async execute() {
     const editor = ensureActiveEditor();
     const cursorPosition = getCursorPosition(editor);
-    const symbols = await getSymbols(editor);
-    const tree = SymbolTree.fromSymbols(symbols, editor.document);
+    const symbolsKey = getSymbolsCacheKey(editor);
+    const tree = await useCacheAsync(symbolsKey, async () =>
+      SymbolTree.fromSymbols(await getSymbols(editor), editor.document)
+    );
 
     const smallestContainer = tree.findSmallestContainer(cursorPosition);
     if (smallestContainer == null) {
