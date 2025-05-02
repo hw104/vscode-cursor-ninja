@@ -9,7 +9,7 @@ Move the cursor like a ninja 🥷.
 Have you ever wanted to jump to the next/previous function, class or variable?  
 I have.
 
-## Demo
+## Commands
 
 - `jumpToNextSiblingSymbol`
 - `jumpToPreviousSiblingSymbol`

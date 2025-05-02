@@ -23,5 +23,3 @@ jobs:
         run: npm run vsce -- publish --no-update-package-json --no-git-tag-version --skip-duplicate
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-
-    #   - run: "npm run vs:publish -- --no-sandbox --no-verify --no-cache --no-telemetry --no-update-notifier --no-progress --no-color"
