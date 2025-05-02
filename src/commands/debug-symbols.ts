@@ -1,16 +1,19 @@
-import { Position, Range, window } from "vscode";
+import { window } from "vscode";
 import { Command } from "../command/command";
 import { ensureActiveEditor } from "../lib/editor";
+import { useCacheAsync } from "../lib/memory_cache";
 import { getCursorPosition, positionToString } from "../lib/position";
 import { SymbolTree } from "../lib/symbol_tree";
-import { getSymbols } from "../lib/symbols";
+import { getSymbols, getSymbolsCacheKey } from "../lib/symbols";
 
 export class DebugSymbolsCommand extends Command {
   async execute() {
     const editor = ensureActiveEditor();
     const cursorPosition = getCursorPosition(editor);
-    const symbols = await getSymbols(editor);
-    const tree = SymbolTree.fromSymbols(symbols, editor.document);
+    const symbolsKey = getSymbolsCacheKey(editor);
+    const tree = await useCacheAsync(symbolsKey, async () =>
+      SymbolTree.fromSymbols(await getSymbols(editor), editor.document)
+    );
     const output = window.createOutputChannel(this.command, { log: true });
 
     output.show(true);

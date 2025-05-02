@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.10.0
+
+- fix: duplicate symbols in the same line behavior
+- improve: performance
+
+## 0.9.0
+
+- refactoring
+
 ## 0.8.0
 
 - improve: `Jump to next/previous parent` behavior

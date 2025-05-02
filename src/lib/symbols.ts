@@ -1,6 +1,5 @@
 import { commands, Position, Range, TextDocument, TextEditor } from "vscode";
 import { rangeToString } from "./position";
-import { Tree } from "./tree";
 
 type FileTopSymbol = {
   name: "fileTopSymbol";
@@ -18,6 +17,22 @@ export type SymbolX = {
 };
 export type SymbolTreeNode = FileTopSymbol | SymbolX;
 
+function isDup(a: SymbolX, b: SymbolX) {
+  return (
+    a.name === b.name &&
+    // a.kind === b.kind &&
+    !!a.range === !!b.range &&
+    (a.range?.isEqual(b.range!) ?? true) &&
+    !!a.selectionRange === !!b.selectionRange &&
+    (a.selectionRange?.isEqual(b.selectionRange!) ?? true) &&
+    a.children?.length === b.children?.length
+  );
+}
+
+export function getSymbolsCacheKey(editor: TextEditor) {
+  return editor.document.uri.toString() + "?" + editor.document.version;
+}
+
 export async function getSymbols(editor: TextEditor): Promise<SymbolX[]> {
   const uri = editor.document.uri;
   if (uri == null) {
@@ -33,7 +48,11 @@ export async function getSymbols(editor: TextEditor): Promise<SymbolX[]> {
   if (!Array.isArray(symbols)) {
     throw new Error("symbols is not array");
   }
-  return symbols;
+
+  const filtered = (symbols as SymbolX[]).filter(
+    (v, i, arr) => !arr.slice(0, i).some((v2) => isDup(v, v2))
+  );
+  return filtered;
 }
 
 export class SymbolW {
