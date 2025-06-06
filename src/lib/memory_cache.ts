@@ -1,7 +1,10 @@
 const cache = new Map<string, any>();
 const maxCacheSize = 100;
 
-export async function useCacheAsync<T>(key: string, fn: () => Promise<T>) {
+export async function useCacheAsync<T>(
+  key: string,
+  fn: () => Promise<T>
+): Promise<T> {
   if (cache.has(key)) {
     return cache.get(key);
   }
