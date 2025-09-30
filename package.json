@@ -20,6 +20,10 @@
   "contributes": {
     "commands": [
       {
+        "command": "cursor-ninja.toggleDebug",
+        "title": "Cursor Ninja: Toggle Debug Mode"
+      },
+      {
         "command": "cursor-ninja.debugSymbols",
         "title": "Cursor Ninja: Debug Symbols"
       },
