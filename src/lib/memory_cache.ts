@@ -18,3 +18,16 @@ export async function useCacheAsync<T>(
   cache.set(key, value);
   return value;
 }
+
+const syncCache: Record<string, { value: any }> = {};
+export async function useObjCacheAsync<T>(
+  key: string,
+  fn: () => Promise<T>
+): Promise<T> {
+  if (syncCache[key] != null) {
+    return syncCache[key].value;
+  }
+  const value = await fn();
+  syncCache[key] = { value };
+  return value;
+}

@@ -1,13 +1,14 @@
 import * as vscode from "vscode";
 import { Command, CommandMiddleware } from "../command/command";
 import { ensureActiveEditor, jumpAndRevealCursor } from "../lib/editor";
-import { useCacheAsync } from "../lib/memory_cache";
+import { useObjCacheAsync } from "../lib/memory_cache";
 import { getCursorPosition } from "../lib/position";
 import { SymbolTree } from "../lib/symbol_tree";
 import { getSymbols, getSymbolsCacheKey } from "../lib/symbols";
 import { ToggleDebugCommand } from "./toggle-debug";
 
 export class JumpToSiblingSymbolCommand extends Command {
+  isDev: boolean;
   constructor(
     context: vscode.ExtensionContext,
     command: string,
@@ -15,25 +16,36 @@ export class JumpToSiblingSymbolCommand extends Command {
     middlewares: CommandMiddleware<unknown>[] = []
   ) {
     super(context, command, middlewares);
+    this.isDev =
+      this.context.extensionMode === vscode.ExtensionMode.Development;
   }
 
   async execute() {
-    const output = ToggleDebugCommand.isDebug
-      ? vscode.window.createOutputChannel(this.command, {
-          log: true,
-        })
-      : undefined;
+    const output =
+      ToggleDebugCommand.isDebug || this.isDev
+        ? vscode.window.createOutputChannel(this.command, {
+            log: true,
+          })
+        : undefined;
+
+    if (this.isDev) {
+      output?.show(true);
+    }
 
     const editor = ensureActiveEditor();
     const cursorPosition = getCursorPosition(editor);
     const symbolsKey = getSymbolsCacheKey(editor);
-    const tree = await useCacheAsync(symbolsKey, async () =>
-      SymbolTree.fromSymbols(await getSymbols(editor), editor.document)
+    const symbols = await useObjCacheAsync(symbolsKey, () =>
+      getSymbols(editor)
     );
+    console.time("create SymbolTree");
+    const tree = SymbolTree.fromSymbols(symbols, editor.document);
+    console.timeEnd("create SymbolTree");
 
-    output?.show(true);
+    output?.appendLine(`----- ${this.command}(${this.direction}) -----`);
+    output?.appendLine(symbolsKey);
     output?.appendLine("tree:\n" + tree.toString());
-    output?.appendLine("cursorPosition:" + cursorPosition);
+    output?.appendLine("cursorPosi:" + JSON.stringify(cursorPosition, null, 2));
 
     const smallestContainer = tree.findSmallestContainer(cursorPosition);
     output?.appendLine(
