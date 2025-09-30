@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.10.1
+
+- chore: toggle debug command
+- fix: jump to previous sibling symbol behavior
+
 ## 0.10.0
 
 - fix: duplicate symbols in the same line behavior

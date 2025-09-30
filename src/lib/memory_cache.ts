@@ -1,7 +1,10 @@
 const cache = new Map<string, any>();
 const maxCacheSize = 100;
 
-export async function useCacheAsync<T>(key: string, fn: () => Promise<T>) {
+export async function useCacheAsync<T>(
+  key: string,
+  fn: () => Promise<T>
+): Promise<T> {
   if (cache.has(key)) {
     return cache.get(key);
   }
@@ -13,5 +16,18 @@ export async function useCacheAsync<T>(key: string, fn: () => Promise<T>) {
   }
   const value = await fn();
   cache.set(key, value);
+  return value;
+}
+
+const syncCache: Record<string, { value: any }> = {};
+export async function useObjCacheAsync<T>(
+  key: string,
+  fn: () => Promise<T>
+): Promise<T> {
+  if (syncCache[key] != null) {
+    return syncCache[key].value;
+  }
+  const value = await fn();
+  syncCache[key] = { value };
   return value;
 }
